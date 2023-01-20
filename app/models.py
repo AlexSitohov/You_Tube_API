@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Table, DECIMAL
 from sqlalchemy.orm import relationship, backref
 
 from database import Base
@@ -17,6 +17,7 @@ class User(Base):
     contents = relationship('Content', back_populates='user')
     playlists = relationship('PlayList', back_populates='user')
     comments = relationship('Comment', back_populates='user')
+    wallet = relationship('Wallet', back_populates='user', uselist=False)
 
 
 class Content(Base):
@@ -65,3 +66,21 @@ class Comment(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relationship('User', back_populates='comments')
     content_id = Column(Integer, ForeignKey('contents.id', ondelete='CASCADE'))
+
+
+class Wallet(Base):
+    __tablename__ = 'wallets'
+    id = Column(Integer, primary_key=True)
+    balance = Column(Integer)
+    date_time_created = Column(DateTime)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    user = relationship('User', back_populates='wallet')
+
+
+class Check(Base):
+    __tablename__ = 'checks'
+    id = Column(Integer, primary_key=True)
+    value = Column(Integer)
+    date_time_created = Column(DateTime)
+    wallet_id_from = Column(Integer, ForeignKey('users.id'))
+    wallet_id_to = Column(Integer, ForeignKey('users.id'))

@@ -1,6 +1,6 @@
 import re
 from fastapi import HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from pydantic import validator
 
@@ -96,6 +96,29 @@ class Comment(BaseModel):
     body: str
     content_id: int
     date_time_created: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class Wallet(BaseModel):
+    balance: int = Field(ge=0)
+    date_time_created: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class MakeTransaction(BaseModel):
+    value: int = Field(ge=0)
+    wallet_id_to: int
+
+
+class Check(BaseModel):
+    value: int
+    date_time_created: datetime
+    wallet_id_to: int
+
 
     class Config:
         orm_mode = True
