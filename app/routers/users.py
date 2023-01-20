@@ -16,8 +16,8 @@ def get_users(db: Session = Depends(get_db)):
 
 @router.get('/user/{user_id}', status_code=status.HTTP_200_OK)
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    user_query = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user_query:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='not found')
+    user_query = db.query(models.User).filter(models.User.id == user_id)
     user = user_query.first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='not found')
     return user

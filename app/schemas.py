@@ -55,7 +55,7 @@ class PlayList(BaseModel):
 
 
 class PlayListResponse(BaseModel):
-    id:int
+    id: int
     playlist_title: str
     date_time_created: datetime
     contents: list[ContentCreate]
@@ -70,6 +70,32 @@ class AddContentToPlaylist(BaseModel):
 
 class Subscription(BaseModel):
     youtuber_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class Profile(BaseModel):
+    first_name: str
+    last_name: str
+    username: str
+
+    @validator("username")
+    def validate_surname(cls, value):
+        if not LETTER_MATCH_PATTERN.match(value):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="username should contains only letters"
+            )
+        return value
+
+    class Config:
+        orm_mode = True
+
+
+class Comment(BaseModel):
+    body: str
+    content_id: int
+    date_time_created: datetime
 
     class Config:
         orm_mode = True
