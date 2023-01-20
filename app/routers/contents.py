@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 
 import models
-from schemas import ContentCreate, UserCreate
+from schemas import ContentCreate, User
 from database import get_db
 from sqlalchemy.orm import Session
 from jwt import get_current_user
@@ -11,7 +11,7 @@ router = APIRouter(tags=['contents'])
 
 @router.post('/contents', status_code=status.HTTP_201_CREATED)
 def upload_content(content: ContentCreate, db: Session = Depends(get_db),
-                   current_user: UserCreate = Depends(get_current_user)):
+                   current_user: User = Depends(get_current_user)):
     new_content = models.Content(**content.dict(), user_id=current_user.dict().get('id_user'))
     db.add(new_content)
     db.commit()

@@ -7,7 +7,7 @@ from pydantic import validator
 LETTER_MATCH_PATTERN = re.compile(r"^[a-zA-Z\-]+$")
 
 
-class UserCreate(BaseModel):
+class User(BaseModel):
     first_name: str
     last_name: str
     username: str
@@ -55,6 +55,7 @@ class PlayList(BaseModel):
 
 
 class PlayListResponse(BaseModel):
+    id:int
     playlist_title: str
     date_time_created: datetime
     contents: list[ContentCreate]
@@ -65,3 +66,10 @@ class PlayListResponse(BaseModel):
 
 class AddContentToPlaylist(BaseModel):
     content_id: list[int]
+
+
+class Subscription(BaseModel):
+    youtuber_id: int
+
+    class Config:
+        orm_mode = True

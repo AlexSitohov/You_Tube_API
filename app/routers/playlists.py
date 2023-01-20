@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 
 import models
-from schemas import PlayList, UserCreate, AddContentToPlaylist, PlayListResponse
+from schemas import PlayList, User, AddContentToPlaylist, PlayListResponse
 from database import get_db
 from sqlalchemy.orm import Session
 from jwt import get_current_user
@@ -12,7 +12,7 @@ router = APIRouter(tags=['playlists'])
 
 @router.post('/playlists', status_code=status.HTTP_201_CREATED)
 def create_playlist(playlist_data: PlayList, db: Session = Depends(get_db),
-                    current_user: UserCreate = Depends(get_current_user)):
+                    current_user: User = Depends(get_current_user)):
     new_playlist = models.PlayList(**playlist_data.dict(), user_id=current_user.dict().get('id_user'))
     db.add(new_playlist)
     db.commit()
@@ -21,7 +21,7 @@ def create_playlist(playlist_data: PlayList, db: Session = Depends(get_db),
 
 
 @router.get('/playlists', response_model=list[PlayListResponse])
-def get_my_playlists(db: Session = Depends(get_db), current_user: UserCreate = Depends(get_current_user)):
+def get_my_playlists(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     my_playlists = db.query(models.PlayList).filter(models.PlayList.user_id == current_user.dict().get('id_user')).all()
     return my_playlists
 
@@ -29,7 +29,7 @@ def get_my_playlists(db: Session = Depends(get_db), current_user: UserCreate = D
 @router.put('/add-content-to-playlist/{playlist_id}', status_code=status.HTTP_201_CREATED,
             response_model=PlayListResponse)
 def add_content_to_playlist(playlist_id: int, playlist_data: AddContentToPlaylist, db: Session = Depends(get_db),
-                            current_user: UserCreate = Depends(get_current_user)):
+                            current_user: User = Depends(get_current_user)):
     playlist_query = db.query(models.PlayList).filter(models.PlayList.id == playlist_id)
     playlist = playlist_query.first()
     if not playlist:
