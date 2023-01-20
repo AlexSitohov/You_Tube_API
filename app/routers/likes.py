@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 
 import models
-from schemas import Like, UserCreate
+from schemas import Like, User
 from database import get_db
 from sqlalchemy.orm import Session
 from jwt import get_current_user
@@ -10,7 +10,7 @@ router = APIRouter(tags=['likes'])
 
 
 @router.post('/likes', status_code=status.HTTP_200_OK)
-def like(like_date: Like, db: Session = Depends(get_db), current_user: UserCreate = Depends(get_current_user)):
+def like(like_date: Like, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     like_query = db.query(models.Like).filter(models.Like.user_id == current_user.dict().get('id_user'),
                                               models.Like.content_id == like_date.content_id)
     like = like_query.first()
@@ -27,7 +27,7 @@ def like(like_date: Like, db: Session = Depends(get_db), current_user: UserCreat
 
 
 @router.get('/liked-content', status_code=status.HTTP_200_OK)
-def get_liked_content(db: Session = Depends(get_db), current_user: UserCreate = Depends(get_current_user)):
+def get_liked_content(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     liked_content = db.query(models.Content).join(
         models.Like, models.Like.content_id == models.Content.id, isouter=True).join(models.User,
 

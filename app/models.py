@@ -48,3 +48,9 @@ playlists_contents = Table('playlists_contents', Base.metadata,
                            Column('playlist_id', ForeignKey('playlists.id'), primary_key=True),
                            Column('content_id', ForeignKey('contents.id'), primary_key=True)
                            )
+
+
+class Subscription(Base):
+    __tablename__ = 'subscriptions'
+    follower_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    youtuber_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
