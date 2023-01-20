@@ -16,6 +16,7 @@ class User(Base):
     date_time_registration = Column(DateTime)
     contents = relationship('Content', back_populates='user')
     playlists = relationship('PlayList', back_populates='user')
+    comments = relationship('Comment', back_populates='user')
 
 
 class Content(Base):
@@ -54,3 +55,13 @@ class Subscription(Base):
     __tablename__ = 'subscriptions'
     follower_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
     youtuber_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+
+
+class Comment(Base):
+    __tablename__ = 'comments'
+    id = Column(Integer, primary_key=True)
+    body = Column(String(200))
+    date_time_created = Column(DateTime)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    user = relationship('User', back_populates='comments')
+    content_id = Column(Integer, ForeignKey('contents.id', ondelete='CASCADE'))

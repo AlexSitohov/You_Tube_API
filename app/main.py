@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from database import Base, engine
-from routers import registration, users, contents, authentication, likes, playlists, subscriptions, feed
+from routers import registration, users, contents, authentication, likes, playlists, subscriptions, feed, profile, \
+    comments
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -23,5 +24,7 @@ app.include_router(likes.router)
 app.include_router(playlists.router)
 app.include_router(subscriptions.router)
 app.include_router(feed.router)
+app.include_router(profile.router)
+app.include_router(comments.router)
 
 Base.metadata.create_all(engine)
