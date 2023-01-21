@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
 import models
-from schemas import Subscription, User
+from schemas import Subscription, User, UserResponse
 from database import get_db
 from sqlalchemy.orm import Session
 from jwt import get_current_user
+from sqlalchemy import func as generic_functions
 
 router = APIRouter(tags=['subscriptions'])
 
@@ -12,27 +13,31 @@ router = APIRouter(tags=['subscriptions'])
 @router.post('/subscriptions', status_code=status.HTTP_201_CREATED)
 def subscribe(subscription_data: Subscription, db: Session = Depends(get_db),
               current_user: User = Depends(get_current_user)):
-    subscription_query = db.query(models.Subscription).filter(
-        models.Subscription.youtuber_id == subscription_data.youtuber_id,
-        models.Subscription.follower_id == current_user.dict().get('id_user'))
-    subscription = subscription_query.first()
-    if subscription:
-        subscription_query.delete()
-        db.commit()
-        return {'msg': 'подписка отменена'}
-    elif not subscription:
-        new_subscription = models.Subscription(follower_id=current_user.dict().get('id_user'),
-                                               **subscription_data.dict())
-        if new_subscription.follower_id == new_subscription.youtuber_id:
-            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                detail='вы не можете подписаться на себя')
-        db.add(new_subscription)
-        db.commit()
-        db.refresh(new_subscription)
-        return {'msg': 'вы подписались'}
+    try:
+        subscription_query = db.query(models.Subscription).filter(
+            models.Subscription.youtuber_id == subscription_data.youtuber_id,
+            models.Subscription.follower_id == current_user.dict().get('id_user'))
+        subscription = subscription_query.first()
+        if subscription:
+            subscription_query.delete()
+            db.commit()
+            return {'msg': 'подписка отменена'}
+        elif not subscription:
+            new_subscription = models.Subscription(follower_id=current_user.dict().get('id_user'),
+                                                   **subscription_data.dict())
+            if new_subscription.follower_id == new_subscription.youtuber_id:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                    detail='вы не можете подписаться на себя')
+            db.add(new_subscription)
+            db.commit()
+            db.refresh(new_subscription)
+            return {'msg': 'вы подписались'}
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'id:{subscription_data.youtuber_id} youtuber not found ')
 
 
-@router.get('/my-subscriptions')
+@router.get('/my-subscriptions', response_model=list[UserResponse])
 def get_my_subscriptions(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     my_subscriptions_id = db.query(models.Subscription.youtuber_id).select_from(models.Subscription).join(
         models.User,
@@ -46,7 +51,7 @@ def get_my_subscriptions(db: Session = Depends(get_db), current_user: User = Dep
     return my_subscriptions
 
 
-@router.get('/my-subscribers')
+@router.get('/my-subscribers', response_model=list[UserResponse])
 def get_my_subscribers(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     my_subscribers_id = db.query(models.Subscription.follower_id).select_from(models.Subscription).join(
         models.User,

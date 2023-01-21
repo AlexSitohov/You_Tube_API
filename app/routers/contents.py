@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 
 import models
-from schemas import ContentCreate, User
+from schemas import ContentCreate, User, ContentResponseWithCommentsAndLike
 from database import get_db
 from sqlalchemy.orm import Session
 from jwt import get_current_user
@@ -19,7 +19,15 @@ def upload_content(content: ContentCreate, db: Session = Depends(get_db),
     return new_content
 
 
-@router.get('/contents', status_code=status.HTTP_200_OK)
+@router.get('/contents', status_code=status.HTTP_200_OK, response_model=list[ContentResponseWithCommentsAndLike])
 def get_contents(db: Session = Depends(get_db)):
     contents = db.query(models.Content).all()
     return contents
+
+
+@router.get('/content/{id_content}', status_code=status.HTTP_200_OK, response_model=ContentResponseWithCommentsAndLike)
+def get_content(id_content: int, db: Session = Depends(get_db)):
+    content = db.query(models.Content).filter(models.Content.id == id_content).first()
+    if not content:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='not found')
+    return content

@@ -28,12 +28,15 @@ class Content(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relationship('User', back_populates='contents')
     playlists = relationship("PlayList", secondary="playlists_contents", back_populates="contents")
+    comments = relationship('Comment', back_populates='content')
+    likes = relationship('Like', back_populates='content')
 
 
 class Like(Base):
     __tablename__ = 'likes'
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
     content_id = Column(Integer, ForeignKey('contents.id', ondelete='CASCADE'), primary_key=True)
+    content = relationship('Content', back_populates='likes')
 
 
 class PlayList(Base):
@@ -66,6 +69,7 @@ class Comment(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relationship('User', back_populates='comments')
     content_id = Column(Integer, ForeignKey('contents.id', ondelete='CASCADE'))
+    content = relationship('Content', back_populates='comments')
 
 
 class Wallet(Base):
@@ -74,7 +78,7 @@ class Wallet(Base):
     balance = Column(Integer)
     date_time_created = Column(DateTime)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
-    user = relationship('User', back_populates='wallet')
+    user = relationship('User', back_populates='wallet', uselist=False)
 
 
 class Check(Base):
