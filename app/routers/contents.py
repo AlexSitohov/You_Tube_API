@@ -1,4 +1,9 @@
-from fastapi import APIRouter, status, Depends, HTTPException
+from datetime import datetime
+from uuid import uuid4
+import secrets
+
+from fastapi import APIRouter, status, Depends, HTTPException, UploadFile, File
+from fastapi import Form
 
 import models
 from schemas import ContentCreate, User, ContentResponseWithCommentsAndLike
@@ -10,9 +15,18 @@ router = APIRouter(tags=['contents'])
 
 
 @router.post('/contents', status_code=status.HTTP_201_CREATED)
-def upload_content(content: ContentCreate, db: Session = Depends(get_db),
-                   current_user: User = Depends(get_current_user)):
-    new_content = models.Content(**content.dict(), user_id=current_user.dict().get('id_user'))
+async def upload_content(title: str, file: UploadFile = File(...),
+                         db: Session = Depends(get_db),
+                         current_user: User = Depends(get_current_user)):
+    user_id = current_user.dict().get('id_user')
+    filename = file.filename
+    FILEPATH = './static/images/'
+    FILENAME = secrets.token_hex(5) + filename
+    with open(FILEPATH + FILENAME, "wb") as buffer:
+        data = await file.read()
+        buffer.write(data)
+    new_content = models.Content(title=title, date_time_uploaded=datetime.now(), file=FILENAME,
+                                 user_id=user_id)
     db.add(new_content)
     db.commit()
     db.refresh(new_content)

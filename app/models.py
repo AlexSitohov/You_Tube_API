@@ -24,6 +24,7 @@ class Content(Base):
     __tablename__ = 'contents'
     id = Column(Integer, primary_key=True)
     title = Column(String(50))
+    file = Column(String(1000))
     date_time_uploaded = Column(DateTime)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relationship('User', back_populates='contents')
