@@ -1,5 +1,5 @@
 import re
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, File, UploadFile
 from pydantic import BaseModel, Field
 from datetime import datetime
 from pydantic import validator
@@ -39,6 +39,7 @@ class UserResponse(BaseModel):
 
 class ContentCreate(BaseModel):
     title: str
+    file: UploadFile = File(...)
     date_time_uploaded: datetime
 
     class Config:
@@ -48,6 +49,7 @@ class ContentCreate(BaseModel):
 class ContentResponse(BaseModel):
     id: int
     title: str
+    file: str = File(...)
     date_time_uploaded: datetime
 
     class Config:
@@ -136,6 +138,7 @@ class Comment(BaseModel):
 class ContentResponseWithCommentsAndLike(BaseModel):
     id: int
     title: str
+    file: str = File(...)
     date_time_uploaded: datetime
     likes: list[LikeResponse]
     comments: list[Comment]
