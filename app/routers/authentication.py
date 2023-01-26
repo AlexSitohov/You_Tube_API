@@ -17,5 +17,7 @@ def login(login_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     if not verify_password(login_data.password, user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='not correct')
     access_token = create_access_token(data={'id_customer': user.id,
-                                             'is_staff': user.is_staff})
+                                             'is_staff': user.is_staff,
+                                             'mail_user': user.mail,
+                                             'username': user.username})
     return {"access_token": access_token, "token_type": "bearer"}

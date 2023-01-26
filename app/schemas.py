@@ -12,6 +12,7 @@ class User(BaseModel):
     last_name: str
     username: str
     password: str
+    mail: str
     date_time_registration: datetime
 
     @validator("username")
@@ -31,6 +32,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     username: str
+    mail: str
     date_time_registration: datetime
 
     class Config:
@@ -59,6 +61,8 @@ class ContentResponse(BaseModel):
 class TokenData(BaseModel):
     id_user: int
     is_staff: bool
+    mail_user: str
+    username: str
 
 
 class Like(BaseModel):

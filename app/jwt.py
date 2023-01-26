@@ -27,9 +27,11 @@ def verify_token(token: str, credentials_exception):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id_user: int = payload.get('id_customer')
         is_staff: bool = payload.get('is_staff')
+        mail_user: str = payload.get('mail_user')
+        username: str = payload.get('username')
         if id_user is None:
             raise credentials_exception
-        token_data = schemas.TokenData(id_user=id_user, is_staff=is_staff)
+        token_data = schemas.TokenData(id_user=id_user, is_staff=is_staff, mail_user=mail_user, username=username)
     except JWTError:
         raise credentials_exception
     return token_data

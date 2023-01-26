@@ -11,11 +11,15 @@ router = APIRouter(tags=['comments'])
 
 @router.post('/comments', status_code=status.HTTP_200_OK)
 def comment(comment_data: Comment, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    comment_new = models.Comment(**comment_data.dict(), user_id=current_user.dict().get('id_user'))
-    db.add(comment_new)
-    db.commit()
-    db.refresh(comment_new)
-    return comment_new
+    try:
+        comment_new = models.Comment(**comment_data.dict(), user_id=current_user.dict().get('id_user'))
+        db.add(comment_new)
+        db.commit()
+        db.refresh(comment_new)
+        return comment_new
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'content with id: {comment_data.content_id} not found ')
 
 
 @router.get('/my-comments')

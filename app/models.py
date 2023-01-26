@@ -12,6 +12,7 @@ class User(Base):
     last_name = Column(String(50))
     username = Column(String(50), unique=True)
     password = Column(String)
+    mail = Column(String(50))
     is_staff = Column(Boolean, default=False)
     date_time_registration = Column(DateTime)
     contents = relationship('Content', back_populates='user')

@@ -34,7 +34,7 @@ def add_content_to_playlist(playlist_data: AddContentToPlaylist, db: Session = D
     if not playlist:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='not found')
     if playlist.user_id != current_user.dict().get('id_user'):
-        return {'msg': 'нет доступа'}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='нет доступа')
     contents = content_to_playlist(playlist_data.content_id, db)
     playlist.contents += contents
     db.commit()

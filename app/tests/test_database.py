@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from database import Base, get_db
 from datetime import datetime
 
+
 SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:123@test_postgres/test_youtube'
 # SQLALCHEMY_DATABASE_URL = "postgresql://postgres:123@localhost/test_youtube"
 

@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 import secrets
 
-from fastapi import APIRouter, status, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, status, Depends, HTTPException, UploadFile, File, Query
 from fastapi import Form
 
 import models
@@ -34,8 +34,13 @@ async def upload_content(title: str, file: UploadFile = File(...),
 
 
 @router.get('/contents', status_code=status.HTTP_200_OK, response_model=list[ContentResponseWithCommentsAndLike])
-def get_contents(db: Session = Depends(get_db)):
-    contents = db.query(models.Content).all()
+def get_contents(search: str = Query(default=None), skip: int = Query(default=0), limit: int = Query(default=100),
+                 db: Session = Depends(get_db)):
+    if search is None:
+        contents = db.query(models.Content).offset(skip).limit(limit).all()
+    else:
+        contents = db.query(models.Content).filter(models.Content.title.like(f'%{search}%')).offset(skip).limit(
+            limit).all()
     return contents
 
 
