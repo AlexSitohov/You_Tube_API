@@ -1,11 +1,13 @@
+import os
 import smtplib
 from email.message import EmailMessage
+from config import SMTP_USER, SMTP_PASSWORD
 
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 587
 
-SMTP_USER = "lilinfinitemob@gmail.com"
-SMTP_PASSWORD = "zhfpjgqopauywzvm"
+SMTP_USER = SMTP_USER
+SMTP_PASSWORD = SMTP_PASSWORD
 
 
 def send_email_report_dashboard(current_user):

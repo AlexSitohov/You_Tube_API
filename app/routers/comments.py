@@ -17,7 +17,7 @@ def comment(comment_data: Comment, db: Session = Depends(get_db), current_user: 
         db.commit()
         db.refresh(comment_new)
         return comment_new
-    except:
+    except Exception:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'content with id: {comment_data.content_id} not found ')
 

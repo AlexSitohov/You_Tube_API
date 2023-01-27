@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from database import Base, get_db
 from datetime import datetime
 
-
 SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:123@test_postgres/test_youtube'
 # SQLALCHEMY_DATABASE_URL = "postgresql://postgres:123@localhost/test_youtube"
 
@@ -42,6 +41,7 @@ def test_registration(client):
                                "last_name": "merc",
                                "username": "merc",
                                "password": "123",
+                               "mail": "asd@gmail.com",
                                "date_time_registration": str(datetime.now())
                            })
     assert response.status_code == status.HTTP_201_CREATED

@@ -12,19 +12,22 @@ router = APIRouter(tags=['likes'])
 
 @router.post('/likes', status_code=status.HTTP_200_OK)
 def like(like_date: Like, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    like_query = db.query(models.Like).filter(models.Like.user_id == current_user.dict().get('id_user'),
-                                              models.Like.content_id == like_date.content_id)
-    like = like_query.first()
-    if like:
-        like_query.delete()
-        db.commit()
-        return {'msg': 'оценка удаленна'}
-    elif not like:
-        new_like = models.Like(user_id=current_user.dict().get('id_user'), content_id=like_date.content_id)
-        db.add(new_like)
-        db.commit()
-        db.refresh(new_like)
-        return {'msg': 'оценка поставлена'}
+    try:
+        like_query = db.query(models.Like).filter(models.Like.user_id == current_user.dict().get('id_user'),
+                                                  models.Like.content_id == like_date.content_id)
+        like = like_query.first()
+        if like:
+            like_query.delete()
+            db.commit()
+            return {'msg': 'оценка удаленна'}
+        elif not like:
+            new_like = models.Like(user_id=current_user.dict().get('id_user'), content_id=like_date.content_id)
+            db.add(new_like)
+            db.commit()
+            db.refresh(new_like)
+            return {'msg': 'оценка поставлена'}
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'контента с id {like_date.content_id} нет')
 
 
 @router.get('/liked-content', status_code=status.HTTP_200_OK, response_model=list[ContentResponseWithCommentsAndLike])
