@@ -1,8 +1,9 @@
 # youtube_api
 1. git clone https://github.com/AlexSitohov/youtube_api.git
 2. cd app
-3. docker-compose up
-4. http://localhost:8080/docs
+3. create .env and and set there (SMTP_USER, SMTP_PASSWORD, JWT_SECRET_KEY)
+4. docker-compose up
+5. http://localhost:8080/docs
 
 api endpoints:
 /registration post. register new user.
