@@ -1,7 +1,9 @@
 version: '3.8'
 
 services:
+
   web:
+    env_file: .env
     build:
       dockerfile: Dockerfile
     ports:
