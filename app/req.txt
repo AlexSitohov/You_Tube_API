@@ -9,3 +9,5 @@ psycopg2-binary
 pytest
 httpx
 python-dotenv
+fastapi-cache2[redis]
+aioredis
