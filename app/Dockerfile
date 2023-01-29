@@ -4,8 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-ENV SMTP_USER="lilinfinitemob@gmail.com"
-    SMTP_PASSWORD="zhfpjgqopauywzvm"
+
 
 
 RUN pip install -r req.txt
