@@ -1,10 +1,8 @@
 from datetime import datetime
-from uuid import uuid4
+
 import secrets
 
 from fastapi import APIRouter, status, Depends, HTTPException, UploadFile, File, Query
-
-from fastapi_cache.decorator import cache
 
 import models
 from schemas import ContentCreate, User, ContentResponseWithCommentsAndLike
@@ -35,7 +33,6 @@ async def upload_content(title: str, file: UploadFile = File(...),
 
 
 @router.get('/contents', status_code=status.HTTP_200_OK, response_model=list[ContentResponseWithCommentsAndLike])
-@cache(60)
 def get_contents(search: str = Query(default=None), skip: int = Query(default=0), limit: int = Query(default=100),
                  db: Session = Depends(get_db)):
     if search is None:
